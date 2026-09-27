@@ -7,6 +7,11 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 );
+supabase.auth.onAuthStateChange((event, session) => {
+  if (session?.provider_token) {
+    localStorage.setItem("google_access_token", session.provider_token);
+  }
+});
 
 type User = {
   id: string;
@@ -52,7 +57,11 @@ export default function Home() {
         const user = session.user;
 
         setUserEmail(user.email ?? null);
-        setGoogleAccessToken(session.provider_token ?? null);
+        const savedGoogleToken = localStorage.getItem("google_access_token");
+
+setGoogleAccessToken(
+  session.provider_token ?? savedGoogleToken ?? null
+);
 
         await fetch("http://127.0.0.1:5000/api/users", {
           method: "POST",
@@ -119,6 +128,10 @@ export default function Home() {
       options: {
         redirectTo: "http://localhost:3000",
         scopes: "https://www.googleapis.com/auth/gmail.send",
+queryParams: {
+  access_type: "offline",
+  prompt: "consent",
+},
       },
     });
 
@@ -213,19 +226,18 @@ export default function Home() {
 
     try {
       const response = await fetch(
-        `http://127.0.0.1:5000/api/tasks/${taskId}/complete`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${session.access_token}`,
-          },
-          body: JSON.stringify({
-            google_access_token: googleAccessToken,
-          }),
-        }
-      );
-
+  `http://127.0.0.1:5000/api/tasks/${taskId}/complete`,
+  {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${session.access_token}`,
+    },
+    body: JSON.stringify({
+      google_access_token: googleAccessToken,
+    }),
+  }
+);
       const data = await response.json();
 
       if (!response.ok) {
@@ -284,6 +296,15 @@ export default function Home() {
           >
             <strong>Logged in as:</strong> {userEmail}
           </div>
+          <button
+  onClick={async () => {
+    await supabase.auth.signOut();
+    localStorage.removeItem("google_access_token");
+    window.location.reload();
+  }}
+>
+  Sign Out
+</button>
 
           <section
             style={{
