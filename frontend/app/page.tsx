@@ -63,7 +63,7 @@ setGoogleAccessToken(
   session.provider_token ?? savedGoogleToken ?? null
 );
 
-        await fetch("http://127.0.0.1:5000/api/users", {
+        await fetch("https://task-management-app-vlyo.onrender.com/api/users", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -82,7 +82,7 @@ setGoogleAccessToken(
         });
 
         const usersResponse = await fetch(
-          "http://127.0.0.1:5000/api/users",
+          "https://task-management-app-vlyo.onrender.com/api/users",
           {
             method: "GET",
             headers: {
@@ -98,7 +98,7 @@ setGoogleAccessToken(
         }
 
         const tasksResponse = await fetch(
-          "http://127.0.0.1:5000/api/tasks",
+          "https://task-management-app-vlyo.onrender.com/api/tasks",
           {
             method: "GET",
             headers: {
@@ -157,7 +157,7 @@ queryParams: {
 
     try {
       const response = await fetch(
-        "http://127.0.0.1:5000/api/tasks",
+        "https://task-management-app-vlyo.onrender.com/api/tasks",
         {
           method: "POST",
           headers: {
@@ -187,7 +187,7 @@ queryParams: {
       setAssignedTo("");
 
       const tasksResponse = await fetch(
-        "http://127.0.0.1:5000/api/tasks",
+        "https://task-management-app-vlyo.onrender.com/api/tasks",
         {
           method: "GET",
           headers: {
@@ -226,7 +226,7 @@ queryParams: {
 
     try {
       const response = await fetch(
-  `http://127.0.0.1:5000/api/tasks/${taskId}/complete`,
+  `https://task-management-app-vlyo.onrender.com/api/tasks/${taskId}/complete`,
   {
     method: "PUT",
     headers: {
